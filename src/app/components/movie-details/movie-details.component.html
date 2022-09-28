@@ -1,0 +1,28 @@
+<div class="element">
+    <div class="card-container" *ngIf="movie">
+        <div class="card-backdrop-container"
+            [ngStyle]="{background: 'url(https://image.tmdb.org/t/p/w1280' + movie.backdrop_path + ')', backgroundSize: 'cover', backgroundPosition: 'center'}">
+        </div>
+        <div class="card-content">
+            <h1 class="card-title">{{movie.title}}</h1>
+            <p class="card-genres">{{genres}}</p>
+            <p class="card-runtime">Runtime: {{movie.runtime | hours}}</p>
+            <p class="card-overview">{{movie.overview}}</p>
+            <p class="card-releaseDate" *ngIf="movie.release_date">Release date: <span class="text-bold">{{movie.release_date | date}}</span></p>
+            <p class="card-budget" *ngIf="movie.budget">Budget: <span class="text-bold">{{movie.budget | currencyShort}}</span></p>
+            <p class="card-revenue" *ngIf="movie.revenue">Revenue: <span class="text-bold">{{movie.revenue | currencyShort}}</span></p>
+            <p class="card-producers-headline" *ngIf="movie.production_companies.length">Produced By:</p>
+            <div class="card-producers-container">
+                <div class="card-producer" *ngFor="let producer of movie.production_companies">
+                    <ng-container *ngIf="producer.logo_path">
+                        <div> </div>
+                        <img [src]="'https://image.tmdb.org/t/p/original' + producer.logo_path" [alt]="producer.name"/>
+                        <p>{{producer.name}}</p>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button (click)="logMovie()" style="margin-top: 40px;">log</button>
+</div>

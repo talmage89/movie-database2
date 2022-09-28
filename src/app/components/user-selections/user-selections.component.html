@@ -1,0 +1,19 @@
+<div class="main-container">
+    <div class="title">{{listTypeTitle}}</div>
+
+    <div class="movie-card-container">
+        <ng-container *ngFor="let movie of dataSource">
+            <mat-card class="movie-card" *ngIf="movie.backdrop_path" (click)="goToMovieDetails(movie)">
+                <img mat-card-image *ngIf="movie.backdrop_path"
+                    [src]="'https://image.tmdb.org/t/p/w300/' + movie.backdrop_path">
+                <div class="card-title-container">
+                    <h4>{{movie?.title}}</h4>
+                </div>
+                <mat-card-content>
+                    <p>{{movie.overview | slice: 0:200}}{{movie.overview ? '...' : ''}}</p>
+                    <mat-icon (click)="deleteMovie(movie)">delete</mat-icon>
+                </mat-card-content>
+            </mat-card>
+        </ng-container>
+    </div>
+</div>
