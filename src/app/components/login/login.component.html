@@ -1,9 +1,9 @@
-<div *ngIf="auth.user$ | async as user; else login">
-    {{user | json}}
-    <hr>
-    <button (click)="auth.signOut()">Sign out</button>
+<div class="element">
+    <div *ngIf="auth.user$ | async as user; else login">
+        <button mat-raised-button color="primary" (click)="auth.signOut()">Sign out</button>
+    </div>
+    
+    <ng-template #login>
+        <button mat-raised-button color="primary" (click)="auth.googleSignin()">Login with google</button>
+    </ng-template>
 </div>
-
-<ng-template #login>
-    <button (click)="auth.googleSignin()">Login with google</button>
-</ng-template>

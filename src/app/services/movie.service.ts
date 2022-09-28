@@ -21,4 +21,10 @@ export class MovieService {
   getById(movieId: string): Observable<Movie> {
     return this.http.get<Movie>(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${environment.movieAPI}&language=en-US`);
   }
+
+  getTrending(): Observable<Movie[]> {
+    return this.http.get<Movie[]>(`https://api.themoviedb.org/3/trending/movie/day?api_key=${environment.movieAPI}`).pipe(
+      map(response => response['results'])
+    );
+  }
 }

@@ -1,11 +1,13 @@
-import * as _ from 'lodash';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ListType } from 'src/app/enums/list-type';
 import { Movie } from 'src/app/interfaces/movie';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { MovieService } from 'src/app/services/movie.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import * as _ from 'lodash';
+import { AuthService } from 'src/app/services/auth.service';
+import { User } from '../../interfaces/user';
 
 @Component({
   selector: 'app-movie-search',
@@ -13,27 +15,38 @@ import { Observable } from 'rxjs';
   styleUrls: ['./movie-search.component.scss']
 })
 export class MovieSearchComponent implements OnInit {
-  searchText: string;
   movies: Movie[] = [];
+  trendingMovies$: Observable<Movie[]> | undefined;
+  watchedMovies: { [id: string]: Movie } = {};
+  wishListMovies: { [id: string]: Movie } = {};
+  user: User;
+  userSubscription: Subscription;
+
+  searchText: string;
   noResults: boolean = false;
-
-  watchedMovies: any[];
-  wishListMovies: any[];
-
-  watchedMovies$: Observable<Movie[]> | undefined;
 
   constructor(
     private movieService: MovieService,
     private router: Router,
-    private localStorageService: LocalStorageService,
+    private auth: AuthService
   ) { }
 
   ngOnInit(): void {
-    this.localStorageService.getGameList(ListType.WATCHEDLIST);
-    this.localStorageService.getGameList(ListType.WISHLIST);
+    this.userSubscription = this.auth.user$.pipe().subscribe(user => {
+      this.user = user;
+    })
 
-    this.localStorageService.watchedMovies.subscribe(movies => this.watchedMovies = _.mapKeys(movies, 'id'));
-    this.localStorageService.wishListMovies.subscribe(movies => this.wishListMovies = _.mapKeys(movies, 'id'));
+    this.auth.watchedMovies.subscribe(movies => this.watchedMovies = _.mapKeys(movies, 'id'));
+    this.auth.wishListMovies.subscribe(movies => this.wishListMovies = _.mapKeys(movies, 'id'));
+
+    this.trendingMovies$ = this.movieService.getTrending();
+
+    this.auth.getUserData(this.user, ListType.WATCHEDLIST);
+    this.auth.getUserData(this.user, ListType.WISHLIST);
+  }
+
+  ngOnDestroy() {
+    this.userSubscription.unsubscribe();
   }
 
   search() {
@@ -52,13 +65,14 @@ export class MovieSearchComponent implements OnInit {
   updateWatchedList(event: MouseEvent, movie: Movie) {
     event.stopPropagation();
 
+
     if (this.watchedMovies[movie.id]) {
-      this.localStorageService.deleteMovie(movie, ListType.WATCHEDLIST);
+      this.auth.deleteMovie(this.user, movie, ListType.WATCHEDLIST);
     } else {
       if (this.watchedMovies[movie.id]) {
-        this.localStorageService.deleteMovie(movie, ListType.WISHLIST);
+        this.auth.deleteMovie(this.user, movie, ListType.WISHLIST);
       }
-      this.localStorageService.saveMovie(movie, ListType.WATCHEDLIST);
+      this.auth.saveMovie(this.user, movie, ListType.WATCHEDLIST);
     }
   }
 
@@ -66,12 +80,12 @@ export class MovieSearchComponent implements OnInit {
     event.stopPropagation();
 
     if (this.wishListMovies[movie.id]) {
-      this.localStorageService.deleteMovie(movie, ListType.WISHLIST);
+      this.auth.deleteMovie(this.user, movie, ListType.WISHLIST);
     } else {
       if (this.wishListMovies[movie.id]) {
-        this.localStorageService.deleteMovie(movie, ListType.WATCHEDLIST);
+        this.auth.deleteMovie(this.user, movie, ListType.WATCHEDLIST);
       }
-      this.localStorageService.saveMovie(movie, ListType.WISHLIST);
+      this.auth.saveMovie(this.user, movie, ListType.WISHLIST);
     }
   }
 }

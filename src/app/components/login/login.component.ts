@@ -7,10 +7,15 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  email: string;
 
   constructor(public auth: AuthService) { }
 
   ngOnInit(): void {
+  }
+
+  emailSignin(): void {
+    console.log(this.email);
   }
 
 }

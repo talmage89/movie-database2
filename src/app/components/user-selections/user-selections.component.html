@@ -11,7 +11,7 @@
                 </div>
                 <mat-card-content>
                     <p>{{movie.overview | slice: 0:200}}{{movie.overview ? '...' : ''}}</p>
-                    <mat-icon (click)="deleteMovie(movie)">delete</mat-icon>
+                    <mat-icon (click)="deleteMovie($event, movie)">delete</mat-icon>
                 </mat-card-content>
             </mat-card>
         </ng-container>

@@ -55,7 +55,7 @@ h2{
   width: 100%;
 }
 
-.searched-movies {
+.searched-movies, .trending-movies {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;

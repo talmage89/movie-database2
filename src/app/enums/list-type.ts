@@ -1,4 +1,4 @@
 export enum ListType {
-    WATCHEDLIST = 'watchedlist', 
-    WISHLIST = 'wishlist'
+    WATCHEDLIST = 'watchedMovies', 
+    WISHLIST = 'wishListMovies'
 }

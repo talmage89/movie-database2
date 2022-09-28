@@ -36,11 +36,29 @@
         </mat-card>
     </div>
 
-    <!-- this text is displayed if no movies are returned. -->
     <h3 class="no-results" *ngIf="noResults">No results found for "{{searchText}}"</h3>
-
-    <!-- to implement -->
-    <div class="trending-movies">
-
+    <div class="trending-movies" *ngIf="!movies.length">
+        <mat-card class="movie-card" *ngFor="let movie of trendingMovies$ | async" (click)="goToMovieDetails(movie)">
+            <img mat-card-image *ngIf="movie.backdrop_path"
+                [src]="'https://image.tmdb.org/t/p/w300/' + movie.backdrop_path">
+            <div class="card-title-container">
+                <h4>{{movie?.title}}</h4>
+            </div>
+            <mat-card-content>
+                <p>{{movie.overview | slice: 0:200}}{{movie.overview ? '...' : ''}}</p>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-icon-button [color]="watchedMovies[movie.id] ? 'accent' : ''"
+                    [matTooltip]="watchedMovies[movie.id] ? 'I haven\'t seen this' : 'I\'ve seen this'"
+                    (click)="updateWatchedList($event, movie)">
+                    <mat-icon class="material-icons-outlined">remove_red_eye</mat-icon>
+                </button>
+                <button mat-icon-button [color]="wishListMovies[movie.id] ? 'warn' : ''"
+                    [matTooltip]="wishListMovies[movie.id] ? 'I don\'t want to watch this' : 'I want to watch this'"
+                    (click)="updateWishList($event, movie)">
+                    <mat-icon>favorite</mat-icon>
+                </button>
+            </mat-card-actions>
+        </mat-card>
     </div>
 </div>
